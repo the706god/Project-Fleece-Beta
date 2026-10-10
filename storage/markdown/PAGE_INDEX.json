@@ -1,0 +1,42 @@
+[
+  {
+    "id": "knowledge/task_1.md#task_1",
+    "title": "Task_1",
+    "file": "knowledge/task_1.md",
+    "level": 1,
+    "heading_path": "Task 1 > Task_1",
+    "summary": "date: 2026-10-09T19:52:40.489639 tags: task, beta_objective  ---  Test Task",
+    "is_visual": false,
+    "tokens": 42
+  },
+  {
+    "id": "knowledge/multimodal_protocols.md#multimodal-engine-protocols",
+    "title": "Multimodal Engine Protocols",
+    "file": "knowledge/multimodal_protocols.md",
+    "level": 1,
+    "heading_path": "Multimodal Protocols > Multimodal Engine Protocols",
+    "summary": "date: 2026-10-09 tags: multimodal, vision, architecture",
+    "is_visual": false,
+    "tokens": 22
+  },
+  {
+    "id": "knowledge/multimodal_protocols.md#direct-visual-ingestion-protocol",
+    "title": "Direct Visual Ingestion Protocol",
+    "file": "knowledge/multimodal_protocols.md",
+    "level": 2,
+    "heading_path": "Multimodal Protocols > Multimodal Engine Protocols > Direct Visual Ingestion Protocol",
+    "summary": "In Project Fleece Beta, documents with tables, diagrams, and complex typography are converted directly to visual images. These images bypass the text parsing pi...",
+    "is_visual": false,
+    "tokens": 62
+  },
+  {
+    "id": "knowledge/multimodal_protocols.md#visual-token-allocation",
+    "title": "Visual Token Allocation",
+    "file": "knowledge/multimodal_protocols.md",
+    "level": 2,
+    "heading_path": "Multimodal Protocols > Multimodal Engine Protocols > Visual Token Allocation",
+    "summary": "Each ingested image or document render is assigned a fixed budget of 576 tokens. The multimodal context manager accounts for visual patches before accepting use...",
+    "is_visual": false,
+    "tokens": 59
+  }
+]

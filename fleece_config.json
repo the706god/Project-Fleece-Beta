@@ -1,0 +1,35 @@
+{
+  "project_name": "Project: Fleece Beta",
+  "version": "1.0.0",
+  "model_type": "multimodal-vlm-slm",
+  "base_model": "Qwen 3.5 4B Vision Instruct",
+  "model_path": "models/model.gguf",
+  "mmproj_path": "models/mmproj.gguf",
+  "engine": {
+    "n_ctx": 16384,
+    "n_threads": null,
+    "n_gpu_layers": -1,
+    "temperature": 0.2,
+    "top_p": 0.95
+  },
+  "memory": {
+    "max_context_tokens": 16384,
+    "reserved_completion_tokens": 2048,
+    "system_anchor_tokens": 1200,
+    "image_token_cost": 576,
+    "memory_compaction_threshold": 0.85,
+    "prioritize_ingested_docs_over_history": true
+  },
+  "ingestion": {
+    "anti_parsing": true,
+    "anti_chunking": true,
+    "anti_truncating": true,
+    "visual_ingestion_enabled": true,
+    "max_block_tokens": 8192,
+    "strict_unbroken_retention": true,
+    "supported_image_types": [".png", ".jpg", ".jpeg", ".webp", ".bmp"]
+  },
+  "storage": {
+    "markdown_root": "storage/markdown"
+  }
+}
