@@ -26,6 +26,18 @@ class FleeceVLMEngine:
         self.model_path = os.path.normpath(os.path.join(self.base_dir, raw_model_path))
         self.mmproj_path = os.path.normpath(os.path.join(self.base_dir, raw_mmproj_path))
 
+        # Handle broken symlinks or missing files via automated download
+        broken_model = os.path.islink(self.model_path) and not os.path.exists(self.model_path)
+        broken_mmproj = os.path.islink(self.mmproj_path) and not os.path.exists(self.mmproj_path)
+        missing_model = not os.path.exists(self.model_path) or os.path.getsize(self.model_path) < 1_000_000
+        missing_mmproj = not os.path.exists(self.mmproj_path) or os.path.getsize(self.mmproj_path) < 1_000_000
+
+        if broken_model or broken_mmproj or missing_model or missing_mmproj:
+            logger.info("VLM models not found locally. Initiating automated first-run setup...")
+            sys.path.insert(0, self.base_dir)
+            from setup_models import download_models
+            download_models()
+
         if not os.path.exists(self.model_path):
             raise FileNotFoundError(f"Model file not found at: {self.model_path}")
         if not os.path.exists(self.mmproj_path):

@@ -26,7 +26,15 @@ Project: Fleece Beta is an out-of-the-box multimodal Small Language Model build 
 
 ## 🚀 Quickstart
 
-### 1. Run via Turnkey Launcher
+### 1. Model Setup (Automated on First Run)
+When you launch the engine for the first time, it automatically detects and downloads the verified `Qwen 3.5 4B Vision Instruct` (`model.gguf`) and Multimodal Projector (`mmproj.gguf`) weights directly into `models/`.
+
+You can also pre-download the weights manually at any time:
+```bash
+python setup_models.py
+```
+
+### 2. Run via Turnkey Launcher
 ```bash
 ./run.sh
 ```
