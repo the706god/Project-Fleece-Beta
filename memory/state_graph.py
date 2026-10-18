@@ -127,12 +127,15 @@ class MultimodalStateGraphMemoryEngine:
         state.matched_sections = matched
 
         active_images = list(state.image_paths)
+        seen_images = set(active_images)
 
         if matched:
             citations = []
             for sec in matched:
                 if sec.get("is_visual") and sec.get("image_path"):
-                    active_images.append(sec["image_path"])
+                    if sec["image_path"] not in seen_images:
+                        active_images.append(sec["image_path"])
+                        seen_images.add(sec["image_path"])
                     citations.append(f"### [Cited Visual Asset: {sec['id']}]")
                 else:
                     citations.append(f"### [Source: {sec['id']}]\n{sec['unbroken_content']}")
@@ -202,4 +205,5 @@ class MultimodalStateGraphMemoryEngine:
             record += f"**Cache Hit:** {state.fast_path_source}\n"
         elif state.matched_sections:
             record += f"**Cited Sections:** {', '.join([s['id'] for s in state.matched_sections])}\n"
+        self.markdown.archive_record(record)
         state.trace("ARCHIVE", "Multimodal state committed to secondary markdown ledger.")

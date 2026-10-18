@@ -11,7 +11,6 @@ Equipped with:
 """
 
 import os
-import sys
 import argparse
 from typing import Optional, List
 

@@ -24,7 +24,6 @@ class MultimodalContextBudgetManager:
     ):
         self.max_context = max_context_tokens
         self.reserved_completion = reserved_completion_tokens
-        self.system_anchor_limit = system_anchor_tokens
         self.image_token_cost = image_token_cost
         self.compaction_threshold = compaction_threshold
         self.token_counter = token_counter or (lambda s: len(s.split()) * 4 // 3)

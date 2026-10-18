@@ -8,8 +8,6 @@ cd "$DIR"
 # Detect Python environment with llama_cpp support
 if [ -f "$DIR/.venv/bin/python" ]; then
     PY="$DIR/.venv/bin/python"
-elif [ -f "/Users/ATLAS/Desktop/CODING/MSNFH INC/charon/.venv/bin/python" ]; then
-    PY="/Users/ATLAS/Desktop/CODING/MSNFH INC/charon/.venv/bin/python"
 elif command -v python3 >/dev/null 2>&1; then
     PY="python3"
 else

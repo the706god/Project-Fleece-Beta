@@ -53,6 +53,12 @@ class LegacyMarkdownStore:
         with open(self.ledger_file, "a", encoding="utf-8") as f:
             f.write(f"- [{timestamp}] Archived {len(turns)} turns to `{os.path.basename(session_file)}`\n")
 
+    def archive_record(self, record: str):
+        """Append an archived user/assistant exchange to the secondary memory ledger."""
+        timestamp = datetime.datetime.now().strftime("%H:%M:%S")
+        with open(self.ledger_file, "a", encoding="utf-8") as f:
+            f.write(f"\n### Archived Exchange [{timestamp}]\n\n{record}\n")
+
     def store_knowledge(self, topic: str, content: str, tags: Optional[List[str]] = None) -> str:
         safe_topic = "".join([c if c.isalnum() or c in "-_" else "_" for c in topic.lower()])
         filepath = os.path.join(self.knowledge_dir, f"{safe_topic}.md")

@@ -7,7 +7,6 @@
   "mmproj_path": "models/mmproj.gguf",
   "engine": {
     "n_ctx": 16384,
-    "n_threads": null,
     "n_gpu_layers": -1,
     "temperature": 0.2,
     "top_p": 0.95

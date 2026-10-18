@@ -1,63 +1,68 @@
 # Project: Fleece Beta 🐑👁️
-> **The 'Crate Motor' SLM Build (Multimodal Edition)**  
-> **Core Model:** Qwen 3.5 4B Vision Instruct (`Q4_K_M` GGUF + `mmproj-F16` GGUF)
 
-Project: Fleece Beta is an out-of-the-box multimodal Small Language Model build designed to act as a **crate motor** for Vision & Language tasks. It ships with direct image and document ingestion, context protection, anti-parsing safeguards, and a two-tier living markdown memory system.
+**The "Crate Motor" SLM build (Multimodal Edition)** — a small, self-contained AI model that sees and reads, running **completely offline on your own machine**. No internet needed after the first setup.
 
----
-
-## ⚡ What's in the Crate
-
-1. **Multimodal VLM Engine (`engine/vlm_engine.py`)**
-   - Pre-configured for `Qwen 3.5 4B Vision` + `mmproj.gguf`.
-   - Uses native `Qwen25VLChatHandler` with hardware acceleration (Metal / CUDA / CPU).
-2. **Two-Tier Living Memory Architecture (`memory/`)**
-   - **Tier 1 — Living Dossier (`DOSSIER.md`):** Instant fast-path cache (~150 tokens) modeled after legacy markdown memory. Frequently requested facts and answers are cached here and served immediately without document rescanning.
-   - **Continuous Auto-Updating:** Whenever a deep query resolves information from documents, the Living Dossier is automatically updated with the new Q&A pair and exact file/anchor citations.
-   - **Tier 2 — Vectorless PageIndex (`PAGE_INDEX.json`):** Hierarchical Table of Contents tree navigation over markdown knowledge files in `storage/markdown/knowledge/`. Zero vector databases, zero embeddings, zero chunking.
-3. **Context Limitation Safeguard (`memory/context_budget.py`)**
-   - Accurately tracks both text tokens and visual patch tokens per ingested image.
-   - Prevents context overflow crashes via automated rolling compaction and offloading to Markdown memory.
-4. **Ingestion Protocols (`ingestion/protocols.py`)**
-   - **Direct Visual Anti-Parsing:** Feed diagrams, scanned pages, blueprints, or screenshots directly to the model as images—completely bypassing fragile OCR or text parsers that break tables and formatting.
-   - **Anti-Chunking & Anti-Truncating:** Guarantees structure and boundary preservation for long inputs.
+**Core model:** Qwen 3.5 4B Vision Instruct (`Q4_K_M` GGUF + `mmproj-F16` GGUF)
 
 ---
 
-## 🚀 Quickstart
+## What "local agent" means here
 
-### 1. Model Setup (Automated on First Run)
-When you launch the engine for the first time, it automatically detects and downloads the verified `Qwen 3.5 4B Vision Instruct` (`model.gguf`) and Multimodal Projector (`mmproj.gguf`) weights directly into `models/`.
+Fleece Beta is a **tool for offloading work from frontier (cloud) agents so it can live locally**. You give it a task — including images, diagrams, and documents — and it stays on your machine, sees the visual input directly, and keeps working without calling a server.
 
-You can also pre-download the weights manually at any time:
+- **No internet required.** Everything runs locally.
+- **No cloud API keys.** No `OPENAI_API_KEY`, no external calls.
+- **No vector databases, embeddings, or OCR.** Images are fed directly to the model via the multimodal projector (`mmproj`); documents are read as unbroken markdown.
+- **No chunking, no truncation.** Text and visuals are treated as complete wholes.
+- **Self-contained.** Everything the project needs sits in one folder.
+
+---
+
+## What's inside the crate
+
+1. **Multimodal VLM engine (`engine/vlm_engine.py`)** — the local vision-language model with hardware acceleration (Metal / CUDA / CPU).
+2. **Two-tier living memory (`memory/`)**
+   - **Tier 1 — Living Dossier (`DOSSIER.md`):** a fast-path cache. Frequently asked questions and answers are served instantly without rescanning.
+   - **Tier 2 — Vectorless PageIndex (`PAGE_INDEX.json`):** a plain-table of contents tree over the markdown knowledge files, plus a visual-asset index. Zero embeddings, zero chunking.
+3. **Context safeguard (`memory/context_budget.py`)** — tracks text tokens and visual patch tokens so the model never runs out of context. It offloads old conversation first and keeps ingested content intact.
+4. **Ingestion protocols (`ingestion/protocols.py`)** — three guarantees:
+   - **Direct Visual Anti-Parsing:** diagrams, scans, and screenshots are fed to the model as images, bypassing brittle OCR.
+   - **Anti-Chunking & Anti-Truncating:** structure and boundaries are preserved.
+
+---
+
+## Quickstart
+
+### 1. Install the model (once)
+
 ```bash
+python -m pip install -r requirements.txt
 python setup_models.py
 ```
 
-### 2. Run via Turnkey Launcher
+The first run downloads the model weights automatically if they are not present.
+
+### 2. Run
+
 ```bash
 ./run.sh
 ```
 
-### 2. Interactive CLI Commands
-Once inside the interactive shell, you can use built-in management commands:
-- `!dossier` — View the live contents of `DOSSIER.md`.
-- `!toc` — Inspect the vectorless Table of Contents knowledge index.
-- `!img /path/to/diagram.png Describe this diagram` — Pass an image directly to the VLM.
-- `!budget` — Check active context token utilization.
-- `!reset` — Clear conversation turns while keeping model and memory intact.
+### 3. Use inside the interactive shell
 
-### 3. CLI Direct Execution (Text + Image)
-```bash
-./run.sh --task "Document Inspector" --prompt "Extract all key bullet points" --image invoice.png
-```
+- `!img /path/to/diagram.png Describe this diagram` — pass an image to the VLM.
+- `!dossier` — view the living dossier.
+- `!toc` — view the table-of-contents index.
+- `!budget` — check context token usage (text + visual tokens).
+- `!reset` — clear conversation turns, keep the model and memory.
 
-### 4. Use as a Python Crate Motor
+### 4. Run as a Python crate motor
+
 ```python
 from fleece import FleeceBetaCrateMotor
 
 motor = FleeceBetaCrateMotor()
-motor.set_task("Technical Diagram Analyst")
-response = motor.execute("Explain the system architecture shown here", image_paths=["architecture.png"])
+motor.set_task("Document Inspector")
+response = motor.execute("Extract all key bullet points", image_paths=["invoice.png"])
 print(response)
 ```
