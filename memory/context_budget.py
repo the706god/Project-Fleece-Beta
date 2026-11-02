@@ -47,6 +47,11 @@ class MultimodalContextBudgetManager:
     def clear_protected_ingestion(self):
         self.protected_ingested_content = ""
 
+    def reset_history(self):
+        """Clears working conversation history and memory continuity summary."""
+        self.working_history = []
+        self.active_summary = ""
+
     def add_interaction(self, role: str, content: Any):
         self.working_history.append({"role": role, "content": content})
 

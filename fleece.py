@@ -214,8 +214,7 @@ def cli():
                 print("=================================\n")
                 continue
             if user_in == "!reset":
-                motor.memory.working_history = []
-                motor.memory.active_summary = ""
+                motor.memory.reset_history()
                 print("\n[✓] Conversation turns cleared. Model and Mimir memory retained.\n")
                 continue
             if user_in.startswith("!audit "):

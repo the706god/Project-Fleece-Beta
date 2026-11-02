@@ -15,13 +15,12 @@ import logging
 import os
 import sys
 import time
-import urllib.request
 import uuid
 from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-import fitz  # PyMuPDF
+import pymupdf as fitz
 import numpy as np
 from PIL import Image
 from pydantic import BaseModel, Field, model_validator

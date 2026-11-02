@@ -38,6 +38,9 @@ class MultimodalIngestionProtocols:
             clean += "\n```\n"
         return clean
 
+    # Alias to align with Alpha and Gamma standard IngestionProtocols interface
+    anti_parse = anti_parse_text
+
     def package_multimodal_payload(
         self,
         text_prompt: str,

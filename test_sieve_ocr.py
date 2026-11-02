@@ -10,9 +10,9 @@ import sys
 import time
 from pathlib import Path
 
-import fitz  # PyMuPDF
+import pymupdf as fitz
 
-from sieve_ocr import ProgressiveOpticalSieve
+from engine.sieve_ocr import ProgressiveOpticalSieve
 
 
 def generate_synthetic_test_pdf(out_path: str = "/tmp/mimir_sieve_test_sample.pdf") -> str:

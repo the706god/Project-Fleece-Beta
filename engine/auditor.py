@@ -9,11 +9,10 @@ for sovereign execution compatibility with Fleece SLM Crate Motors.
 
 import os
 import re
-import json
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Optional, Tuple
-from dataclasses import dataclass, field, asdict
+from typing import List, Optional, Tuple
+from dataclasses import dataclass, field
 
 logger = logging.getLogger("FleeceAgentAuditor")
 
