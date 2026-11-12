@@ -288,7 +288,7 @@ class FleeceAgentAuditor:
             target_name=path.name,
             edition=recommended_edition.split()[0].upper(),
             mode=recommended_mode,
-            prompt_preview=aggregated_text[:300].strip(),
+            prompt_preview=aggregated_text.strip(),
         )
 
         return AuditReport(
@@ -417,7 +417,7 @@ def run_sovereign_agent():
     motor.set_task("Execute audited skill: {clean_name}")
 
     # 4. Run Execution through Two-Tier State Graph Memory
-    prompt = \"\"\"{prompt_preview[:180]}...\"\"\"
+    prompt = \"\"\"{prompt_preview}\"\"\"
     result = motor.execute(prompt, stream=True, verbose=True)
     return result
 

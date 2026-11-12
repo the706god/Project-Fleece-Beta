@@ -93,7 +93,7 @@ Last Updated: {datetime.datetime.now().isoformat()}
             and not p.strip().startswith("### [Source:")
             and not p.strip().lower().startswith("based on the ingested knowledge")
         ]
-        clean_ans = " ".join(paragraphs[:3]) if paragraphs else sanitized_res
+        clean_ans = " ".join(paragraphs) if paragraphs else sanitized_res
         clean_ans = clean_ans.replace("\n", " ")
         sources = ", ".join(source_refs) if source_refs else "Deep Knowledge Retrieval"
 

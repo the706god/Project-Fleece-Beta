@@ -21,7 +21,7 @@ class MultimodalIngestionProtocols:
     def __init__(self, max_block_tokens: int = 8192, token_counter: Optional[Callable[[str], int]] = None):
         self.max_block_tokens = max_block_tokens
         self.token_counter = token_counter or (lambda s: len(s.split()) * 4 // 3)
-        self.supported_image_exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp"}
+        self.supported_image_exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}
 
     def is_image_path(self, path: str) -> bool:
         if not isinstance(path, str):

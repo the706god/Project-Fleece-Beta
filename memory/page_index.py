@@ -87,7 +87,7 @@ class MultimodalPageIndexEngine:
                 if current_section["content_lines"]:
                     text_block = "\n".join(current_section["content_lines"]).strip()
                     current_section["tokens"] = self.token_counter(text_block)
-                    current_section["summary"] = text_block[:160].replace("\n", " ") + ("..." if len(text_block) > 160 else "")
+                    current_section["summary"] = text_block.replace("\n", " ").strip()
                     file_sections.append(current_section)
 
                 level = len(m.group(1))
@@ -115,7 +115,7 @@ class MultimodalPageIndexEngine:
         if current_section["content_lines"]:
             text_block = "\n".join(current_section["content_lines"]).strip()
             current_section["tokens"] = self.token_counter(text_block)
-            current_section["summary"] = text_block[:160].replace("\n", " ") + ("..." if len(text_block) > 160 else "")
+            current_section["summary"] = text_block.replace("\n", " ").strip()
             file_sections.append(current_section)
 
         self.tree.extend(file_sections)

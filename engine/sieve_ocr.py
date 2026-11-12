@@ -284,18 +284,115 @@ class ProgressiveOpticalSieve:
             if page_res.quarantined_block_count > 0:
                 any_quarantined = True
             pages_out.append(page_res)
+        elif ext in (".txt", ".md", ".json", ".csv", ".xml", ".yaml", ".yml", ".html", ".log"):
+            # Text-based documents: verbatim unbroken ingestion without OCR or truncation
+            try:
+                with open(str(path), "r", encoding="utf-8", errors="replace") as tf:
+                    text_content = tf.read()
+            except Exception:
+                text_content = path.read_bytes().decode("utf-8", errors="replace")
+            blocks = [
+                OCRBlock(
+                    page_number=1,
+                    text=text_content,
+                    confidence=1.0,
+                    pass_source=PassSource.PASS_1_OS_NATIVE,
+                    bbox_x0=0.0,
+                    bbox_y0=0.0,
+                    bbox_x1=1.0,
+                    bbox_y1=1.0,
+                    latency_ms=0.0,
+                )
+            ]
+            page_res = PageOCRResult(
+                page_number=1,
+                width_px=1000,
+                height_px=1000,
+                dpi=self.raster_dpi,
+                full_page_text=text_content,
+                blocks=blocks,
+                pass_1_count=1,
+                pass_2_escalated_count=0,
+                pass_3_escalated_count=0,
+                quarantined_block_count=0,
+                total_latency_ms=0.0,
+            )
+            pages_out.append(page_res)
+        elif ext in (".mp3", ".wav", ".m4a", ".flac", ".ogg", ".aac", ".aiff", ".mp4", ".mov", ".mkv", ".avi", ".webm", ".m4v"):
+            # Audio/video metadata & stream manifest verbatim
+            size_b = os.path.getsize(str(path))
+            desc = f"Media Stream: {path.name} ({ext.lstrip('.').upper()})\nSize: {size_b} bytes\nPath: {path}"
+            blocks = [
+                OCRBlock(
+                    page_number=1,
+                    text=desc,
+                    confidence=1.0,
+                    pass_source=PassSource.PASS_1_OS_NATIVE,
+                    bbox_x0=0.0,
+                    bbox_y0=0.0,
+                    bbox_x1=1.0,
+                    bbox_y1=1.0,
+                    latency_ms=0.0,
+                )
+            ]
+            page_res = PageOCRResult(
+                page_number=1,
+                width_px=1000,
+                height_px=1000,
+                dpi=self.raster_dpi,
+                full_page_text=desc,
+                blocks=blocks,
+                pass_1_count=1,
+                pass_2_escalated_count=0,
+                pass_3_escalated_count=0,
+                quarantined_block_count=0,
+                total_latency_ms=0.0,
+            )
+            pages_out.append(page_res)
         else:
-            doc = fitz.open(str(path))
-            for idx in range(len(doc)):
-                page_num = idx + 1
-                page = doc[idx]
-                pix = page.get_pixmap(dpi=self.raster_dpi, alpha=False)
-                img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-                page_res = self.process_page_image(img, page_number=page_num)
-                if page_res.quarantined_block_count > 0:
-                    any_quarantined = True
+            try:
+                doc = fitz.open(str(path))
+                for idx in range(len(doc)):
+                    page_num = idx + 1
+                    page = doc[idx]
+                    pix = page.get_pixmap(dpi=self.raster_dpi, alpha=False)
+                    img = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+                    page_res = self.process_page_image(img, page_number=page_num)
+                    if page_res.quarantined_block_count > 0:
+                        any_quarantined = True
+                    pages_out.append(page_res)
+                doc.close()
+            except Exception as exc:
+                logger.warning("fitz could not render %s: %s; falling back to binary inspection", path, exc)
+                raw_bytes = path.read_bytes()
+                desc = f"Binary Stream: {path.name} ({len(raw_bytes)} bytes)\nSHA-256: {sha256_hash}"
+                blocks = [
+                    OCRBlock(
+                        page_number=1,
+                        text=desc,
+                        confidence=1.0,
+                        pass_source=PassSource.PASS_1_OS_NATIVE,
+                        bbox_x0=0.0,
+                        bbox_y0=0.0,
+                        bbox_x1=1.0,
+                        bbox_y1=1.0,
+                        latency_ms=0.0,
+                    )
+                ]
+                page_res = PageOCRResult(
+                    page_number=1,
+                    width_px=1000,
+                    height_px=1000,
+                    dpi=self.raster_dpi,
+                    full_page_text=desc,
+                    blocks=blocks,
+                    pass_1_count=1,
+                    pass_2_escalated_count=0,
+                    pass_3_escalated_count=0,
+                    quarantined_block_count=0,
+                    total_latency_ms=0.0,
+                )
                 pages_out.append(page_res)
-            doc.close()
 
         total_ms = round((time.perf_counter() - t0) * 1000.0, 2)
         result = DocumentOCRResult(

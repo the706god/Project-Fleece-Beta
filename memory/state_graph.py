@@ -200,7 +200,7 @@ class MultimodalStateGraphMemoryEngine:
             logger.error("Failed to update dossier: %s", e)
 
     def _node_archive(self, state: MultimodalGraphState):
-        record = f"**User:** {state.clean_query[:100]}...\n**Assistant:** {state.response[:100]}...\n"
+        record = f"**User:** {state.clean_query}\n**Assistant:** {state.response}\n"
         if state.is_fast_path_hit:
             record += f"**Cache Hit:** {state.fast_path_source}\n"
         elif state.matched_sections:

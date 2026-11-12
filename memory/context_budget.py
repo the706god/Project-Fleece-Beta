@@ -132,7 +132,7 @@ class MultimodalContextBudgetManager:
             for m in evicted_turns:
                 c = m.get("content", "")
                 text_part = c if isinstance(c, str) else "[Visual/Multimodal Content]"
-                summaries.append(f"[{m['role']}] {str(text_part)[:80]}")
+                summaries.append(f"[{m['role']}] {str(text_part)}")
             self.active_summary = f"[Conversation Archive: {' '.join(summaries)}]"
             return True
 
