@@ -1,94 +1,154 @@
-# Project: Fleece Beta 🐑👁️
+# Project: Fleece Beta
 
-**The "Crate Motor" SLM build (Multimodal Edition)** — a small, self-contained AI model equipped with **Mimir OCR** that sees and reads, running **completely offline on your own machine**. No internet needed after the first setup.
+The Crate Motor AI Build (Multimodal Edition) — a private, eyes-on AI model that can see, read, and understand images and documents directly on your own computer. Once set up, it requires zero internet connection and sends zero pixels to the cloud.
 
-**Core model:** Qwen 3.5 4B Vision Instruct (`Q4_K_M` GGUF + `mmproj-F16` GGUF)
-**Ingestion & Memory Stack:** **Mimir OCR** (3-Pass Progressive Optical Sieve with Coordinate Delta-Masking + Two-Tier Multimodal Vectorless Memory)
-
----
-
-## What "local agent" means here
-
-Fleece Beta is a **tool for offloading work from frontier (cloud) agents so it can live locally**. You give it a task — including degraded scans, PDFs, diagrams, and images — and Mimir OCR extracts coordinate-grounded `[x0, y0, x1, y1]` blocks while the VLM sees visual inputs directly without calling a server.
-
-- **No internet required.** Everything runs locally.
-- **No cloud API keys.** No `OPENAI_API_KEY`, no AWS Textract, no external calls.
-- **Mimir OCR + Direct Visual Projection.** Degraded documents pass through the 3-Pass Progressive Optical Sieve with Coordinate Delta-Masking (`sieve_ocr.py`), while diagrams and schematics are fed directly via `mmproj`.
-- **No chunking, no truncation.** Text and visuals are treated as complete wholes.
-- **Self-contained.** Everything the project needs sits in one folder.
+Core Model: Qwen 3.5 4B Vision Instruct (Full Q8_0 Precision) + Qwen 3.5 4B Multimodal Projector (mmproj)
+Vision Interface: Native MTMDChatHandler with Hardware Vision Projection
+Memory & Acceleration: Native Metal TurboQuant (turbo4/turbo4) with 65,536-token context capacity
+Document Stack: Mimir OCR (3-Pass Progressive Optical Sieve) + Two-Tier Multimodal Vectorless Memory
 
 ---
 
-## What's inside the crate
+## Why Fleece Exists: Stop Paying Cloud Tolls for Every Picture You Scan
 
-1. **Multimodal VLM engine (`engine/vlm_engine.py`)** — the local vision-language model with hardware acceleration (Metal / CUDA / CPU).
-2. **Mimir OCR (`sieve_ocr.py` & `memory/`)**
-   - **3-Pass Progressive Optical Sieve with Coordinate Delta-Masking (`engine/sieve_ocr.py`):**
-     - **Pass 1 (OS-Native OCR):** Apple Vision / Windows OCR clears ~85% of clean text in `<150ms/page`.
-     - **Coordinate Delta-Masking:** Locks in `>= 0.85` confidence blocks and crops only `< 0.85` bounding boxes (`12px` margin at `200 DPI`).
-     - **Pass 2 (Targeted `RapidOCR` ONNX):** Runs on delta-masked sub-crops (~12%: faded print, stamps, tables) and projects coordinates back to full-page `[0.0000, 1.0000]` space.
-     - **Pass 3 (In-Process Local VLM via `MiniCPM-V 2.6`):** Escalates stubborn cursive/marginalia crops (~3%) at `temperature=0.0` with Gate 3 quarantine (`needs_human_review = True` if `< 0.85` or `[?]`).
-   - **Tier 1 — Mimir Living Dossier (`DOSSIER.md`):** a fast-path cache. Frequently asked questions and answers are served instantly without rescanning.
-   - **Tier 2 — Mimir Vectorless PageIndex (`PAGE_INDEX.json`):** a plain table-of-contents tree over the markdown knowledge files, plus a visual-asset index. Zero embeddings, zero chunking.
-3. **Context safeguard (`memory/context_budget.py`)** — tracks text tokens and visual patch tokens so the model never runs out of context.
-4. **Ingestion protocols (`ingestion/protocols.py`)** — three guarantees:
-   - **Direct Visual & Mimir Anti-Parsing:** diagrams, scans, and PDFs preserve structure and coordinates.
-   - **Anti-Chunking & Anti-Truncating:** structure and boundaries are preserved.
+Frontier vision models like Claude 3.5 Sonnet and GPT-4o are impressive, but they charge you for every single pixel they look at. 
+
+Every time you have a background agent look at a scanned invoice, check a screenshot, or inspect a photo, you are billed by the tile. If you process dozens of receipts, delivery slips, or visual charts every day, you are burning money on basic vision tasks that your own computer can do for free. 
+
+Even worse, sending sensitive photos of legal forms, business receipts, medical documents, or proprietary software screens to cloud servers creates serious privacy and security risks.
+
+Project Fleece Beta solves this. It is your local visual crate motor. It gives your agents eyes that run 100% on your own machine. You get unlimited visual inspections for zero dollars per month, zero token bills, zero rate limits, and 100% privacy.
 
 ---
 
-## Quickstart
+## What Fleece Beta Is Designed For
 
-### 1. Install the model (once)
+Fleece Beta is the visual workhorse of the Fleece suite. It is designed to look at the real world: scanned pages, digital diagrams, photographs of paper, and computer screenshots.
+
+It pairs deep optical text extraction with direct visual understanding. That means it doesn't just read the words on a page—it understands how things look, where arrows point, what boxes contain, and how layouts are arranged.
+
+### Updated Technical Specs
+
+- Brain: Qwen 3.5 4B Vision Instruct with full Q8_0 precision weights.
+- Vision Bridge: Modern MTMDChatHandler paired with the Qwen 3.5 4B mmproj projector, providing direct hardware image understanding.
+- TurboQuant KV Cache: Uses high-efficiency 4-bit memory packing (turbo4/turbo4). This cuts memory usage by nearly four times and unlocks a huge 65,536-token workspace that holds both long conversations and dense visual image tokens.
+- Memory Fallback Guard: If run on an older machine without TurboQuant, it smoothly steps down to standard q8_0 memory instead of crashing.
+- Zero-Destruction Guarantee: Fleece strictly protects your visual documents:
+  1. Anti-Parsing: Visual layouts and bounding boxes are preserved exactly as they appear.
+  2. Anti-Chunking: Multi-page forms and complex diagrams are kept whole.
+  3. Anti-Truncating: Information is never chopped off mid-page.
+
+---
+
+## How Fleece Remembers: Two-Tier Vectorless Memory
+
+Most AI vision tools split pages into pieces and shove them into vector databases, losing the spatial layout of where things were located. Fleece Beta uses an unbroken two-tier memory system:
+
+- Tier 1 Memory (Fast Visual Working Memory — The Living Dossier): A live, automatically updated notepad. When an agent identifies line items, customer names, or visual issues, it records them here so future questions are answered instantly.
+- Tier 2 Memory (PageIndex Tree & Visual Asset Map): Keeps a structured table-of-contents tree for all text and an exact coordinate map of every image. The AI knows not just what was said, but the exact physical rectangle on the page where it was found.
+- Cold Backup (Secondary Markdown Store): Every document and visual report is archived safely on your local drive as clean, permanent Markdown.
+
+---
+
+## How Fleece Reads: The Mimir 3-Pass Sieve
+
+Documents in the real world are rarely clean. They have wrinkles, faded ink, stamps, and signatures. Fleece Beta handles them through the Mimir 3-Pass Progressive Optical Sieve:
+
+1. Pass 1 (Instant System Reading): Uses the built-in reading engine inside macOS or Windows. It captures clean, printed text in less than 150 milliseconds per page with zero added memory.
+2. Pass 2 (Targeted Coordinate Cleanup): The system checks its own confidence. If a stamp, skewed line, or blurry number falls below 85% confidence, it crops only that exact rectangular patch and re-reads it with RapidOCR.
+3. Pass 3 (Chandra-OCR-2 Fallback): If a crop has difficult cursive handwriting or heavy damage, Fleece calls an in-process specialist vision reader (Chandra-OCR-2). This model stays asleep in memory until needed, saving your system's RAM.
+
+---
+
+## Real-World Possibilities (Industry-Agnostic)
+
+Fleece Beta brings immediate practical value to any workflow dealing with physical paper or digital imagery:
+
+- Paper Receipts, Invoices, and Delivery Slips: Snap photos of crumpled paper or scanned receipts. Beta extracts every line item, price, tax amount, and vendor name into clean data without uploading anything to the internet.
+- Diagram and Chart Inspection: Feed in engineering flowcharts, floor plans, network maps, or business organization charts. Ask Beta to explain connections, find bottlenecks, or verify that required steps are included.
+- Screenshot Troubleshooting: Drop in a screenshot of a computer error, a software bug, or a dashboard display. Beta inspects the screen and tells you what went wrong and how to fix it.
+- Forms with Checkboxes and Signatures: Check whether physical agreements or intake forms have been signed, which checkboxes were marked, and whether required fields are blank.
+
+---
+
+## Ideal System Specifications
+
+### Mac (Apple Silicon)
+- Best: Mac with M1 Pro, M2 Pro, M3 Pro, M4, or better (16 GB to 32 GB Unified Memory).
+- Minimum: M1 / M2 / M3 Mac with 16 GB Unified Memory.
+- Operating System: macOS 13 (Ventura) or later.
+
+### Windows PC
+- Best: 8-core CPU with 32 GB system RAM and an NVIDIA GPU (RTX 3060, 4060, 4070 or better with 8 GB+ VRAM).
+- Minimum: 6-core CPU with 16 GB RAM and a 6 GB VRAM GPU.
+- Operating System: Windows 10 or 11 (64-bit).
+
+### Linux
+- Best: Modern workstation with 32 GB RAM and an NVIDIA GPU with 8 GB+ VRAM (CUDA enabled).
+- Minimum: 6-core modern CPU with 16 GB RAM and 6 GB GPU VRAM.
+
+---
+
+## What to Expect for Response Speeds
+
+- Text Generation Speed: 25 to 45 words per second on Apple Silicon (M1 Pro or better) and modern NVIDIA GPUs.
+- Image Processing Latency: Takes only 1 to 2 seconds to inspect a high-resolution photo or document scan.
+- Optical Reading Speed (Mimir OCR): Under 1 second per page for over 85% of standard visual documents.
+- Resource Impact: Runs quietly in the background without locking up your desktop or making fans scream.
+
+---
+
+## Quickstart Guide
+
+### 1. Set Up the Environment
 
 ```bash
 python -m pip install -r requirements.txt
 python setup_models.py
 ```
 
-### 2. Run Mimir OCR Benchmark or Launch Shell
+### 2. Test Document Reading or Start the Shell
 
 ```bash
+# Run the built-in document reading test:
 python test_sieve_ocr.py
+
+# Launch the interactive terminal:
 ./run.sh
 ```
 
-### 3. Use inside the interactive shell
+### 3. Useful Commands Inside the Shell
 
-- `!audit /path/to/skill` — audit an agent or skill for sovereign Fleece compatibility.
-- `!ocr /path/to/scan.pdf` — ingest a PDF or image via the Mimir 3-Pass Progressive Optical Sieve.
-- `!img /path/to/diagram.png Describe this diagram` — pass an image directly to the VLM.
-- `!dossier` — view the Mimir living dossier.
-- `!toc` — view the Mimir table-of-contents index.
-- `!budget` — check context token usage (text + visual tokens).
-- `!reset` — clear conversation turns, keep the model and memory.
+- `!img /path/to/diagram.png What does this diagram show?` — Ask a question about an image directly.
+- `!ocr /path/to/scan.pdf` — Process a multi-page document through the 3-Pass Optical Sieve.
+- `!audit /path/to/skill` — Audit an outside agent or prompt for Fleece compatibility.
+- `!dossier` — Open your active working notepad.
+- `!toc` — View the document table of contents.
+- `!budget` — Check your context token usage (including image token consumption).
+- `!reset` — Clear the conversation while keeping loaded images and documents intact.
 
-### 4. Run as a Python crate motor
+### 4. Use Inside Python Scripts
 
 ```python
 from fleece import FleeceBetaCrateMotor
 
+# 1. Start the visual engine
 motor = FleeceBetaCrateMotor()
-motor.ingest_document("scanned_ledger.pdf")
-response = motor.execute("Extract all line items and their bounding boxes.")
-print(response)
+
+# 2. Ingest a document scan
+motor.ingest_document("delivery_slip.pdf")
+
+# 3. Ask your question with full visual grounding
+answer = motor.execute("Extract all line items, totals, and check if the signature box is signed.")
+print(answer)
 ```
 
 ---
 
-## Auditing Frontier Agents & Skills (`AUDIT_PLAYBOOK.md`)
+## Auditing Outside Agents and Skills
 
-Fleece includes an automated compatibility auditor to evaluate whether skills and agents designed for Frontier platforms (OpenAI, Claude, Antigravity, LangChain, CrewAI) can run sovereignly on Fleece SLM Crate Motors.
+Fleece Beta includes the automated compatibility auditor. It inspects prompts, vision tools, and agent workflows written for cloud systems (like OpenAI Vision or Claude) to confirm whether they can run sovereignly on local hardware.
 
 ```bash
-# Audit any agent script, prompt, or skill folder:
 ./audit_agent.py /path/to/my_skill/
-
-# Generate Markdown audit report:
-./audit_agent.py /path/to/my_skill/ --format markdown --output AUDIT_REPORT.md
-
-# Audit directly from the interactive shell:
-[You] > !audit /path/to/my_skill
 ```
-
-See [`AUDIT_PLAYBOOK.md`](AUDIT_PLAYBOOK.md) for the complete 6-Pillar Audit Rubric and platform-by-platform conversion instructions.
