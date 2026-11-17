@@ -5,11 +5,9 @@ import base64
 import logging
 from typing import Generator, List, Dict, Any, Optional
 
-# Ensure compiled TurboQuant dylibs are discovered first
-TURBOQUANT_LIB_DIR = "/Users/ATLAS/Desktop/CODING/Tools/llama-cpp-turboquant/build/bin"
-if os.path.exists(TURBOQUANT_LIB_DIR):
-    os.environ.setdefault("LLAMA_CPP_LIB_PATH", TURBOQUANT_LIB_DIR)
-    os.environ.setdefault("MTMD_CPP_LIB", TURBOQUANT_LIB_DIR)
+# Load bundled portable TurboQuant native dylibs and C-struct ABI alignment
+from engine.turboquant_loader import configure_turboquant_runtime
+TURBOQUANT_LIB_DIR = configure_turboquant_runtime()
 
 KV_CACHE_TYPE_MAP = {
     "f16": 1,

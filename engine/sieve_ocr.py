@@ -129,10 +129,8 @@ def create_local_vlm_fallback(
     state: Dict[str, Any] = {"llama": None, "initialized": False}
 
     # Ensure compiled TurboQuant dylibs are discovered first
-    tq_lib_dir = "/Users/ATLAS/Desktop/CODING/Tools/llama-cpp-turboquant/build/bin"
-    if os.path.exists(tq_lib_dir):
-        os.environ.setdefault("LLAMA_CPP_LIB_PATH", tq_lib_dir)
-        os.environ.setdefault("MTMD_CPP_LIB", tq_lib_dir)
+    from engine.turboquant_loader import configure_turboquant_runtime
+    configure_turboquant_runtime()
 
     def _resolve_paths() -> Tuple[Optional[str], Optional[str]]:
         resolved_model = model_path
@@ -142,7 +140,6 @@ def create_local_vlm_fallback(
             for c in [
                 project_root / "models" / "chandra-ocr-2.Q6_K.gguf",
                 project_root / "models" / "chandra-ocr-2.gguf",
-                Path("/Users/ATLAS/Desktop/CODING/Tools/models/chandra-ocr-2.Q6_K.gguf"),
                 project_root / "models" / "MiniCPM-V-2.6-Q4_0.gguf",
             ]:
                 if c.exists():
@@ -153,7 +150,6 @@ def create_local_vlm_fallback(
             for c in [
                 project_root / "models" / "chandra-ocr-2.mmproj-f16.gguf",
                 project_root / "models" / "chandra-ocr-2-mmproj.gguf",
-                Path("/Users/ATLAS/Desktop/CODING/Tools/models/chandra-ocr-2.mmproj-f16.gguf"),
                 project_root / "models" / "MiniCPM-V-2.6-mmproj-f16.gguf",
             ]:
                 if c.exists():

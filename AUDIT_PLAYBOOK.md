@@ -145,7 +145,7 @@ Multi-agent graphs often chain multiple heavy LLM calls with chat memory buffers
 
 ## 4. Running the Automated Auditor
 
-Each Fleece edition includes the automated command-line auditor [`audit_agent.py`](file:///Users/ATLAS/Desktop/CODING/Projects/Project-Fleece/Project-Fleece-Gamma/audit_agent.py).
+Each Fleece edition includes the automated command-line auditor [`audit_agent.py`](audit_agent.py).
 
 ### CLI Usage:
 ```bash
