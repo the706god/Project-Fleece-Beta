@@ -50,13 +50,13 @@ Most AI vision tools split pages into pieces and shove them into vector database
 
 ---
 
-## How Fleece Reads: The Mimir 3-Pass Sieve
+## Bonus Feature: Mimir OCR
 
-Documents in the real world are rarely clean. They have wrinkles, faded ink, stamps, and signatures. Fleece Beta handles them through the Mimir 3-Pass Progressive Optical Sieve:
+Most local vision tools leave you wiring up your own PDF readers and cloud OCR APIs just to extract text from a scan. We packaged **Mimir OCR**—the proprietary OCR stack from our upcoming **MimirOS** release—directly into Fleece Beta so you get a complete, multi-purpose local AI tool right out of the box.
 
-1. Pass 1 (Instant System Reading): Uses the built-in reading engine inside macOS or Windows. It captures clean, printed text in less than 150 milliseconds per page with zero added memory.
-2. Pass 2 (Targeted Coordinate Cleanup): The system checks its own confidence. If a stamp, skewed line, or blurry number falls below 85% confidence, it crops only that exact rectangular patch and re-reads it with RapidOCR.
-3. Pass 3 (Chandra-OCR-2 Fallback): If a crop has difficult cursive handwriting or heavy damage, Fleece calls an in-process specialist vision reader (Chandra-OCR-2). This model stays asleep in memory until needed, saving your system's RAM.
+How you use it is completely up to you. Whether your workflow touches medical, legal, financial, administrative, or everyday files, Mimir OCR is built to read whatever documents and forms you feed it with fidelity and accuracy—offline and under your control.
+
+Under the hood, it runs a 3-pass pipeline (OS-native reading first, RapidOCR on low-confidence boxes, and a sleeping Chandra-OCR-2 fallback only for tough scans) without chopping or cutting off your pages. Combined with Fleece Beta's portable vision engine, Mimir OCR pulls exact text and box coordinates while Beta inspects the layout itself—bringing real-world local AI to your machine anywhere in the world.
 
 ---
 
