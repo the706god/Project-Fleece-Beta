@@ -121,12 +121,18 @@ def create_local_vlm_fallback(
     lazy_load: bool = True,
 ) -> Callable[[Image.Image], Tuple[str, float]]:
     """
-    Builds a Pass 3 Local VLM fallback callback powered by MiniCPM-V 2.6 GGUF
-    via in-process llama-cpp-python (or local Ollama fallback).
+    Builds a Pass 3 Local VLM fallback callback powered by Chandra-OCR-2 GGUF
+    via in-process llama-cpp-python (MTMDChatHandler).
     Loads weights lazily on first Pass 3 escalation so Pass 1/Pass 2 runs consume zero VLM RAM.
     """
     project_root = Path(__file__).resolve().parent.parent
     state: Dict[str, Any] = {"llama": None, "initialized": False}
+
+    # Ensure compiled TurboQuant dylibs are discovered first
+    tq_lib_dir = "/Users/ATLAS/Desktop/CODING/Tools/llama-cpp-turboquant/build/bin"
+    if os.path.exists(tq_lib_dir):
+        os.environ.setdefault("LLAMA_CPP_LIB_PATH", tq_lib_dir)
+        os.environ.setdefault("MTMD_CPP_LIB", tq_lib_dir)
 
     def _resolve_paths() -> Tuple[Optional[str], Optional[str]]:
         resolved_model = model_path
@@ -134,9 +140,10 @@ def create_local_vlm_fallback(
 
         if not resolved_model:
             for c in [
+                project_root / "models" / "chandra-ocr-2.Q6_K.gguf",
+                project_root / "models" / "chandra-ocr-2.gguf",
+                Path("/Users/ATLAS/Desktop/CODING/Tools/models/chandra-ocr-2.Q6_K.gguf"),
                 project_root / "models" / "MiniCPM-V-2.6-Q4_0.gguf",
-                project_root / "models" / "MiniCPM-V.gguf",
-                Path("/Users/ATLAS/Desktop/CODING/Tools/models/MiniCPM-V-2.6-Q4_0.gguf"),
             ]:
                 if c.exists():
                     resolved_model = str(c)
@@ -144,9 +151,10 @@ def create_local_vlm_fallback(
 
         if not resolved_mmproj:
             for c in [
+                project_root / "models" / "chandra-ocr-2.mmproj-f16.gguf",
+                project_root / "models" / "chandra-ocr-2-mmproj.gguf",
+                Path("/Users/ATLAS/Desktop/CODING/Tools/models/chandra-ocr-2.mmproj-f16.gguf"),
                 project_root / "models" / "MiniCPM-V-2.6-mmproj-f16.gguf",
-                project_root / "models" / "MiniCPM-V-mmproj.gguf",
-                Path("/Users/ATLAS/Desktop/CODING/Tools/models/MiniCPM-V-2.6-mmproj-f16.gguf"),
             ]:
                 if c.exists():
                     resolved_mmproj = str(c)
@@ -162,19 +170,26 @@ def create_local_vlm_fallback(
         if rmodel and rmmproj and os.path.exists(rmodel) and os.path.exists(rmmproj):
             try:
                 from llama_cpp import Llama
-                from llama_cpp.llama_chat_format import MiniCPMv26ChatHandler
+                try:
+                    from llama_cpp.llama_chat_format import MTMDChatHandler
+                    chat_handler = MTMDChatHandler(clip_model_path=rmmproj, verbose=False)
+                except Exception:
+                    from llama_cpp.llama_chat_format import MiniCPMv26ChatHandler
+                    chat_handler = MiniCPMv26ChatHandler(clip_model_path=rmmproj, verbose=False)
 
-                chat_handler = MiniCPMv26ChatHandler(clip_model_path=rmmproj, verbose=False)
                 state["llama"] = Llama(
                     model_path=rmodel,
                     chat_handler=chat_handler,
                     n_ctx=2048,
                     n_gpu_layers=-1,
+                    type_k=8,  # q8_0 KV cache for high-accuracy OCR crops
+                    type_v=8,  # q8_0 KV cache
+                    flash_attn=True,
                     verbose=False,
                 )
-                logger.info("Mimir OCR Pass 3: In-process MiniCPM-V 2.6 GGUF initialized.")
+                logger.info("Mimir OCR Pass 3: In-process Chandra-OCR-2 GGUF initialized.")
             except Exception as e:
-                logger.warning("Could not initialize in-process MiniCPM-V 2.6: %s", e)
+                logger.warning("Could not initialize in-process Chandra-OCR-2: %s", e)
                 state["llama"] = None
         return state["llama"]
 

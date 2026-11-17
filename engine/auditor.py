@@ -395,7 +395,7 @@ class FleeceAgentAuditor:
             mode = "einstein" if "multi" in t_lower or "complex" in t_lower else "medium"
             return "GAMMA (Reasoning Core - Qwen 3.5 9B)", mode
         else:
-            return "ALPHA (Text & Code Core - Qwen 2.5 Coder 3B)", None
+            return "ALPHA (Text & Fast Inference Core - Qwen 3.5 4B)", None
 
     def _generate_adapter(self, target_name: str, edition: str, mode: Optional[str], prompt_preview: str) -> str:
         clean_name = re.sub(r"[^a-zA-Z0-9_]", "_", target_name)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Project: Fleece Beta - The 'Crate Motor' SLM Build (Multimodal Edition)
-Model: Qwen 3.5 4B Vision Instruct
+Model: Qwen 3.5 4B Vision Instruct with Native TurboQuant (turbo4/turbo4)
 Equipped with Mimir OCR (3-Pass Progressive Optical Sieve + Vectorless Memory System):
 - Mimir 3-Pass Progressive Optical Sieve with Coordinate Delta-Masking (sieve_ocr.py)
 - Mimir Living Multimodal Dossier (L1 Fast-Path Cache, consistently auto-updating)
