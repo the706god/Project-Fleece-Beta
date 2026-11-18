@@ -54,7 +54,7 @@ class AuditReport:
         ]
 
         pillar_names = {
-            "1_BUDGET": "Pillar 1: Context Budget Footprint (16k SLM Limit)",
+            "1_BUDGET": "Pillar 1: Context Budget Footprint (65k SLM Limit)",
             "2_TOOLS": "Pillar 2: Tooling & Function Calling Complexity",
             "3_MEMORY": "Pillar 3: Vectorless Memory Architecture (L1/L2)",
             "4_INGESTION": "Pillar 4: Document Ingestion & Mimir OCR Readiness",
@@ -88,7 +88,7 @@ class AuditReport:
 class FleeceAgentAuditor:
     """
     Sovereign auditor evaluating agents, prompts, and skills against the 6 Fleece pillars:
-    1. Context Budget Footprint (16k token limit, 1,200 token system anchor limit)
+    1. Context Budget Footprint (65k token limit, 1,200 token system anchor limit)
     2. Tool Schema Complexity (flat, deterministic parameters for 3B-9B SLMs)
     3. Vectorless Memory Adaptation (maps Pinecone/Chroma/Weaviate to Dossier L1 + PageIndex L2)
     4. Document & Vision Ingestion (maps cloud OCR to Mimir 3-Pass Sieve)
@@ -155,15 +155,15 @@ class FleeceAgentAuditor:
         token_est = self._estimate_tokens(aggregated_text)
 
         # -------------------------------------------------------------
-        # Pillar 1: Context Budget Footprint (16,384 Limit)
+        # Pillar 1: Context Budget Footprint (65,536 Limit)
         # -------------------------------------------------------------
-        if token_est > 16384:
+        if token_est > 65536:
             score -= 30
             findings.append(Finding(
                 severity="FAIL",
                 pillar="1_BUDGET",
-                title="Monolithic Content Exceeds 16k SLM Maximum Context",
-                description=f"Scanned files contain ~{token_est:,} tokens, exceeding Fleece's 16,384 token ceiling.",
+                title="Monolithic Content Exceeds 65k SLM Maximum Context",
+                description=f"Scanned files contain ~{token_est:,} tokens, exceeding Fleece's 65,536 token ceiling.",
                 remediation="Extract reference materials into markdown files in storage/markdown/knowledge/. Mimir PageIndex (L2) will index them with 0 context token load."
             ))
         elif token_est > 3500:
@@ -180,7 +180,7 @@ class FleeceAgentAuditor:
                 severity="PASS",
                 pillar="1_BUDGET",
                 title="Compact Context Budget Footprint",
-                description=f"Total footprint is ~{token_est:,} tokens. Fits comfortably inside Fleece's 1,200-token anchor and 16k budget."
+                description=f"Total footprint is ~{token_est:,} tokens. Fits comfortably inside Fleece's 1,200-token anchor and 65k budget."
             ))
 
         # -------------------------------------------------------------

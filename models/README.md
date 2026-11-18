@@ -19,8 +19,8 @@ Once these files are downloaded to your computer, Fleece Beta runs completely of
    - What It Does: Translates raw pixels from your images into language tokens using the MTMDChatHandler so the brain can understand them.
 
 3. Optical Sieve Specialists (Mimir OCR Pass 3)
-   - Specialist Brain: `chandra-ocr-2.Q6_K.gguf`
-   - Specialist Eyes: `chandra-ocr-2.mmproj-f16.gguf`
+   - Specialist Brain: `Qwen2.5-VL-7B-Instruct-Q4_K_M.gguf`
+   - Specialist Eyes: `Qwen2.5-VL-7B-Instruct-mmproj-F16.gguf`
    - What They Do: These files sleep in the background. If a scanned document has messy handwriting, water stains, or tilted text that passes 1 and 2 cannot verify, this specialist wakes up, reads the bad crop, and goes back to sleep.
 
 ---
@@ -47,4 +47,4 @@ This script checks whether the models are already on your computer. If they are 
 - KV Cache Mode: turbo4/turbo4 (with automatic q8_0 fallback)
 - Context Window: 65,536 tokens
 - Default Source: Hugging Face (`unsloth/Qwen3.5-4B-GGUF`)
-- OCR Fallback Model: `chandra-ocr-2.Q6_K.gguf` + `chandra-ocr-2.mmproj-f16.gguf`
+- OCR Fallback Model: `Qwen2.5-VL-7B-Instruct-Q4_K_M.gguf` + `Qwen2.5-VL-7B-Instruct-mmproj-F16.gguf`

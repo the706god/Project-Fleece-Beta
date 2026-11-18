@@ -31,16 +31,16 @@ MODELS = [
 
 MIMIR_OCR_MODELS = [
     {
-        "filename": "chandra-ocr-2.Q6_K.gguf",
-        "gdrive_id": "14UOJius5rgg5mxjv__EwY86Q0wS8_q4a",
-        "fallback_url": "https://huggingface.co/unsloth/chandra-ocr-2-GGUF/resolve/main/chandra-ocr-2.Q6_K.gguf",
-        "min_bytes": 3_000_000_000,
+        "filename": "Qwen2.5-VL-7B-Instruct-Q4_K_M.gguf",
+        "gdrive_id": "13NKQhIvuXF0LVT51gpxTfmeE21epSiQ9",
+        "fallback_url": "https://huggingface.co/unsloth/Qwen2.5-VL-7B-Instruct-GGUF/resolve/main/Qwen2.5-VL-7B-Instruct-Q4_K_M.gguf",
+        "min_bytes": 4_000_000_000,
     },
     {
-        "filename": "chandra-ocr-2.mmproj-f16.gguf",
-        "gdrive_id": "1bzLtTzpX9kwhEMbvoxWGF6izmTfGOfTo",
-        "fallback_url": "https://huggingface.co/unsloth/chandra-ocr-2-GGUF/resolve/main/chandra-ocr-2.mmproj-f16.gguf",
-        "min_bytes": 500_000_000,
+        "filename": "Qwen2.5-VL-7B-Instruct-mmproj-F16.gguf",
+        "gdrive_id": "1Az7KxDUgmxdVWWzi0EqpnjTRhv90j8Rt",
+        "fallback_url": "https://huggingface.co/unsloth/Qwen2.5-VL-7B-Instruct-GGUF/resolve/main/mmproj-F16.gguf",
+        "min_bytes": 1_000_000_000,
     },
 ]
 

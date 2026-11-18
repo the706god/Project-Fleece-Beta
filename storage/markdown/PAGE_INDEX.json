@@ -1,42 +1,32 @@
 [
   {
-    "id": "knowledge/task_1.md#task_1",
-    "title": "Task_1",
-    "file": "knowledge/task_1.md",
-    "level": 1,
-    "heading_path": "Task 1 > Task_1",
-    "summary": "date: 2026-10-09T19:52:40.489639 tags: task, beta_objective  ---  Test Task",
-    "is_visual": false,
-    "tokens": 42
-  },
-  {
     "id": "knowledge/multimodal_protocols.md#multimodal-engine-protocols",
     "title": "Multimodal Engine Protocols",
     "file": "knowledge/multimodal_protocols.md",
     "level": 1,
     "heading_path": "Multimodal Protocols > Multimodal Engine Protocols",
-    "summary": "date: 2026-10-09 tags: multimodal, vision, architecture",
+    "summary": "date: 2026-11-18 tags: multimodal, vision, architecture",
     "is_visual": false,
-    "tokens": 22
+    "tokens": 8
   },
   {
-    "id": "knowledge/multimodal_protocols.md#direct-visual-ingestion-protocol",
-    "title": "Direct Visual Ingestion Protocol",
+    "id": "knowledge/multimodal_protocols.md#direct-visual---mimir-sieve-ingestion-protocol",
+    "title": "Direct Visual & Mimir Sieve Ingestion Protocol",
     "file": "knowledge/multimodal_protocols.md",
     "level": 2,
-    "heading_path": "Multimodal Protocols > Multimodal Engine Protocols > Direct Visual Ingestion Protocol",
-    "summary": "In Project Fleece Beta, documents with tables, diagrams, and complex typography are converted directly to visual images. These images bypass the text parsing pi...",
+    "heading_path": "Multimodal Protocols > Multimodal Engine Protocols > Direct Visual & Mimir Sieve Ingestion Protocol",
+    "summary": "In Project Fleece Beta, documents with tables, diagrams, and complex typography are processed through the Mimir 3-Pass Progressive Optical Sieve and direct visual projection via MTMDChatHandler (Qwen 3.5 4B Vision Instruct Q8_0 + mmproj-F16). This preserves spatial bounding boxes, prevents table breakage, and avoids text chunking distortion.",
     "is_visual": false,
     "tokens": 62
   },
   {
-    "id": "knowledge/multimodal_protocols.md#visual-token-allocation",
-    "title": "Visual Token Allocation",
+    "id": "knowledge/multimodal_protocols.md#visual---context-token-allocation",
+    "title": "Visual & Context Token Allocation",
     "file": "knowledge/multimodal_protocols.md",
     "level": 2,
-    "heading_path": "Multimodal Protocols > Multimodal Engine Protocols > Visual Token Allocation",
-    "summary": "Each ingested image or document render is assigned a fixed budget of 576 tokens. The multimodal context manager accounts for visual patches before accepting use...",
+    "heading_path": "Multimodal Protocols > Multimodal Engine Protocols > Visual & Context Token Allocation",
+    "summary": "The working context capacity is set to 65,536 tokens via Native Metal TurboQuant (turbo4/turbo4 KV cache, with automatic q8_0 fallback). Each direct image render is budgeted at 576 visual tokens. When context usage crosses 85%, dialogue history is offloaded to the secondary markdown ledger while preserving visual and document anchors.",
     "is_visual": false,
-    "tokens": 59
+    "tokens": 66
   }
 ]

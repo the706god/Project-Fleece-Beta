@@ -56,7 +56,7 @@ Most local vision tools leave you wiring up your own PDF readers and cloud OCR A
 
 How you use it is completely up to you. Whether your workflow touches medical, legal, financial, administrative, or everyday files, Mimir OCR is built to read whatever documents and forms you feed it with fidelity and accuracy—offline and under your control.
 
-Under the hood, it runs a 3-pass pipeline (OS-native reading first, RapidOCR on low-confidence boxes, and a sleeping Chandra-OCR-2 fallback only for tough scans) without chopping or cutting off your pages. Combined with Fleece Beta's portable vision engine, Mimir OCR pulls exact text and box coordinates while Beta inspects the layout itself—bringing real-world local AI to your machine anywhere in the world.
+Under the hood, it runs a 3-pass pipeline (OS-native reading first, RapidOCR on low-confidence boxes, and an isolated stateless Qwen2.5-VL-7B optical processor only for tough scans) without chopping or cutting off your pages. Combined with Fleece Beta's portable vision engine, Mimir OCR pulls exact text and box coordinates while Beta inspects the layout itself—bringing real-world local AI to your machine anywhere in the world.
 
 ---
 

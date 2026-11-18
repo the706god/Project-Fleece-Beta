@@ -2,6 +2,7 @@
 # Project: Fleece Beta - Multimodal Turnkey Launcher (Mimir OCR Active)
 
 set -e
+export PYTHONDONTWRITEBYTECODE="1"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd "$DIR"
 
@@ -15,7 +16,7 @@ else
     exit 1
 fi
 
-echo "🚀 Starting Project: Fleece Beta (Multimodal + Mimir OCR) using: $PY"
+echo "Starting Project: Fleece Beta (Multimodal + Mimir OCR) using: $PY"
 if [ "$(uname -s)" = "Darwin" ] && /usr/sbin/sysctl -n hw.optional.arm64 >/dev/null 2>&1; then
     exec arch -arm64 "$PY" fleece.py "$@"
 else

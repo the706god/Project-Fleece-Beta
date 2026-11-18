@@ -19,12 +19,11 @@ from typing import Optional, List
 from engine.vlm_engine import FleeceVLMEngine
 from engine.sieve_ocr import ProgressiveOpticalSieve, DocumentOCRResult
 from engine.auditor import FleeceAgentAuditor, AuditReport
-from memory.context_budget import MultimodalContextBudgetManager
+from memory.context_budget import MultimodalContextBudgetManager, MultimodalIngestionProtocols
 from memory.markdown_store import LegacyMarkdownStore
 from memory.page_index import MultimodalPageIndexEngine
 from memory.dossier import LivingDossierEngine
 from memory.state_graph import MultimodalStateGraphMemoryEngine
-from ingestion.protocols import MultimodalIngestionProtocols
 
 SYSTEM_DIRECTIVE_BETA = """You are an AI engine powered by Project: Fleece Beta with the Mimir OCR & Vectorless Memory Stack.
 
@@ -64,7 +63,7 @@ class FleeceBetaCrateMotor:
 
         mem_cfg = self.engine.config.get("memory", {})
         self.memory = MultimodalContextBudgetManager(
-            max_context_tokens=mem_cfg.get("max_context_tokens", 16384),
+            max_context_tokens=mem_cfg.get("max_context_tokens", 65536),
             reserved_completion_tokens=mem_cfg.get("reserved_completion_tokens", 2048),
             system_anchor_tokens=mem_cfg.get("system_anchor_tokens", 1200),
             image_token_cost=mem_cfg.get("image_token_cost", 576),

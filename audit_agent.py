@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 "true" '''\'
+export PYTHONDONTWRITEBYTECODE="1"
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 if [ -f "$DIR/.venv/bin/python" ]; then
     PY="$DIR/.venv/bin/python"

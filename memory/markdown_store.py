@@ -1,5 +1,4 @@
 import os
-import glob
 import datetime
 from typing import List, Dict, Any, Optional
 
@@ -76,29 +75,3 @@ date: {datetime.datetime.now().isoformat()}
         with open(self.ledger_file, "a", encoding="utf-8") as f:
             f.write(f"- Stored knowledge topic `{topic}` in `{os.path.basename(filepath)}`\n")
         return filepath
-
-    def query(self, query_term: str, max_results: int = 3) -> List[Dict[str, str]]:
-        results = []
-        pattern = os.path.join(self.root_dir, "**", "*.md")
-        query_lower = query_term.lower()
-
-        for filepath in glob.glob(pattern, recursive=True):
-            if filepath == self.ledger_file:
-                continue
-            try:
-                with open(filepath, "r", encoding="utf-8") as f:
-                    content = f.read()
-                if query_lower in content.lower():
-                    idx = content.lower().find(query_lower)
-                    start = max(0, idx - 150)
-                    end = min(len(content), idx + 350)
-                    snippet = content[start:end].strip()
-                    results.append({
-                        "file": os.path.relpath(filepath, self.root_dir),
-                        "snippet": f"...{snippet}..."
-                    })
-                    if len(results) >= max_results:
-                        break
-            except Exception:
-                continue
-        return results

@@ -6,7 +6,7 @@ from typing import List, Optional, Tuple
 
 class LivingDossierEngine:
     """
-    L1 Fast-Path Memory Cache & Living Markdown Dossier for Project: Fleece Gamma.
+    L1 Fast-Path Memory Cache & Living Markdown Dossier for Project: Fleece Beta.
     Acts as the rapid-response front door:
     1. Fast-Path Lookup (L1): Checks for known answers, key facts, and recurring FAQs
        costing only ~100-250 tokens before escalating to deep file scanning.
@@ -22,14 +22,14 @@ class LivingDossierEngine:
 
     def _ensure_dossier(self):
         if not os.path.exists(self.dossier_path):
-            header = f"""# Project: Fleece Gamma - Living Knowledge Dossier
+            header = f"""# Project: Fleece Beta - Living Knowledge Dossier
 Initialized: {datetime.datetime.now().isoformat()}
 Last Updated: {datetime.datetime.now().isoformat()}
 
 ## Executive Facts & Core Entities
-- [Engine]: Project Fleece Gamma (Reasoning Edition) Crate Motor initialized.
-- [Core Model]: Qwen 3.5 9B (8.95B) The Defiant Fable Uncensored Heretic plusIQ-TOOLS (Q6_K MTP).
-- [Memory Model]: Two-tier architecture (L1 Living Dossier + L2 Vectorless PageIndex).
+- [Engine]: Project Fleece Beta (Multimodal Edition) Crate Motor initialized.
+- [Core Model]: Qwen 3.5 4B Vision Instruct (Full Q8_0 Precision) + mmproj-F16 via MTMDChatHandler with Native Metal TurboQuant (65,536-token context).
+- [Memory Model]: Two-tier architecture (L1 Living Dossier + L2 Multimodal Vectorless PageIndex).
 
 ## Living FAQ & Fast-Path Knowledge Bank
 """

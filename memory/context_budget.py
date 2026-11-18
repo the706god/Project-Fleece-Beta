@@ -1,3 +1,4 @@
+import os
 import logging
 from typing import List, Dict, Any, Callable, Optional
 
@@ -15,7 +16,7 @@ class MultimodalContextBudgetManager:
 
     def __init__(
         self,
-        max_context_tokens: int = 16384,
+        max_context_tokens: int = 65536,
         reserved_completion_tokens: int = 2048,
         system_anchor_tokens: int = 1200,
         image_token_cost: int = 576,
@@ -158,3 +159,47 @@ class MultimodalContextBudgetManager:
 
         messages.extend(self.working_history)
         return messages
+
+
+class MultimodalIngestionProtocols:
+    """
+    Multimodal Ingestion Protocols for Project: Fleece Beta:
+    Preserves raw text formatting verbatim and packages visual assets into data-URI payloads.
+    """
+
+    def __init__(self, max_block_tokens: int = 8192, token_counter: Optional[Callable[[str], int]] = None):
+        self.max_block_tokens = max_block_tokens
+        self.token_counter = token_counter or (lambda s: len(s.split()) * 4 // 3)
+        self.supported_image_exts = {".png", ".jpg", ".jpeg", ".webp", ".bmp", ".tif", ".tiff"}
+
+    def is_image_path(self, path: str) -> bool:
+        if not isinstance(path, str):
+            return False
+        _, ext = os.path.splitext(path.strip())
+        return ext.lower() in self.supported_image_exts and os.path.exists(path.strip())
+
+    def anti_parse_text(self, raw_input: str) -> str:
+        if not raw_input:
+            return ""
+        clean = raw_input.replace("\r\n", "\n").replace("\r", "\n")
+        if clean.count("```") % 2 != 0:
+            clean += "\n```\n"
+        return clean
+
+    anti_parse = anti_parse_text
+
+    def package_multimodal_payload(
+        self,
+        text_prompt: str,
+        image_paths: Optional[List[str]] = None,
+        encode_func: Optional[Callable[[str], str]] = None,
+    ) -> List[Dict[str, Any]]:
+        content_items: List[Dict[str, Any]] = []
+        clean_text = self.anti_parse_text(text_prompt)
+        if clean_text:
+            content_items.append({"type": "text", "text": clean_text})
+        if image_paths and encode_func:
+            for img_p in image_paths:
+                if self.is_image_path(img_p):
+                    content_items.append({"type": "image_url", "image_url": {"url": encode_func(img_p)}})
+        return content_items

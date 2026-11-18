@@ -29,7 +29,7 @@ flowchart TD
     end
 
     subgraph Rubric["Fleece 6-Pillar Rubric"]
-        P1["Pillar 1: Context Budget Footprint (16k SLM Limit)"]
+        P1["Pillar 1: Context Budget Footprint (65k SLM Limit)"]
         P2["Pillar 2: Tooling & Schema Complexity"]
         P3["Pillar 3: Vectorless Memory Architecture (L1/L2)"]
         P4["Pillar 4: Document Ingestion (Mimir OCR)"]
@@ -38,18 +38,18 @@ flowchart TD
     end
 
     subgraph SovereignEngine["Sovereign Fleece Execution"]
-        A1["Alpha (Qwen 2.5 Coder 3B)"]
-        A2["Beta (Qwen 3.5 4B Vision)"]
-        A3["Gamma (Qwen 3.5 9B Reasoning)"]
+        A1["Alpha (Qwen 3.5 4B Instruct Q8_0)"]
+        A2["Beta (Qwen 3.5 4B Vision Q8_0)"]
+        A3["Gamma (Qwen 3.5 9B Instruct Q8_0)"]
     end
 
     FrontierSource --> Rubric --> SovereignEngine
 ```
 
-### Pillar 1: Context Budget Footprint (16k SLM Limit)
-- **Constraint:** Fleece enforces a strict **16,384 token ceiling**, a **1,200 token system anchor limit**, and a **2,048–4,096 completion buffer**.
+### Pillar 1: Context Budget Footprint (65k SLM Limit)
+- **Constraint:** Fleece enforces a strict **65,536 token ceiling**, a **1,200 token system anchor limit**, and a **2,048–4,096 completion buffer**.
 - **Audit Rule:**
-  - ❌ **FAIL:** Preamble or background documents exceeding `16,384` tokens.
+  - ❌ **FAIL:** Preamble or background documents exceeding `65,536` tokens.
   - ⚠️ **WARN:** Static preamble text exceeding `3,500` tokens.
   - ✅ **PASS:** Lean, high-signal system prompt (`< 1,200` tokens) with domain background stored in `storage/markdown/knowledge/`.
 - **Refactoring Strategy:** Strip monolithic documentation out of the system prompt and drop it into `storage/markdown/knowledge/<topic>.md`. Fleece's **Mimir PageIndex (L2)** navigates the document tree without consuming context tokens until a specific section is retrieved.
@@ -84,7 +84,7 @@ flowchart TD
     - **Pass 1:** OS-Native OCR (<150 ms/page, zero RAM).
     - **Coordinate Delta-Masking:** Crops only sub-crops where `confidence < 0.85`.
     - **Pass 2:** Targeted CPU `RapidOCR` ONNX runtime on low-confidence crops.
-    - **Pass 3:** In-process `MiniCPM-V 2.6` local VLM fallback for cursive/marginalia.
+    - **Pass 3:** Isolated stateless `Qwen2.5-VL-7B-Instruct-Q4_K_M` optical processor for cursive/marginalia.
     - **Normalized Coordinates:** Every text block is grounded with `[x0, y0, x1, y1]`.
 
 ---
@@ -94,9 +94,9 @@ Match the audited workload to the right Fleece Crate Motor edition:
 
 | Workload Characteristics | Target Fleece Edition | Core Specifications |
 | :--- | :--- | :--- |
-| **Deterministic Code, SQL, Text Editing, CLI Tools** | **Project: Fleece Alpha** | Qwen 2.5 Coder 3B Instruct, 16k context, sub-50ms latency |
-| **Visual Document Inspection, Screenshots, Charts, UI** | **Project: Fleece Beta** | Qwen 3.5 4B Vision Instruct + `mmproj`, direct visual tensor ingestion |
-| **Multi-Step Analytical Logic, Compliance Audit, Deep Reasoning** | **Project: Fleece Gamma** | Qwen 3.5 9B Defiant Fable, switchable `plusIQ` reasoning modes (`{REASON:einstein}`, `{REASON:spoon}`) |
+| **Deterministic Code, SQL, Text Editing, CLI Tools** | **Project: Fleece Alpha** | Qwen 3.5 4B Instruct (Q8_0), 65k TurboQuant context, sub-50ms latency |
+| **Visual Document Inspection, Screenshots, Charts, UI** | **Project: Fleece Beta** | Qwen 3.5 4B Vision Instruct (Q8_0) + `mmproj-F16` via `MTMDChatHandler`, 65k TurboQuant context |
+| **Multi-Step Analytical Logic, Compliance Audit, Deep Reasoning** | **Project: Fleece Gamma** | Qwen 3.5 9B Instruct (Q8_0), 65k TurboQuant context, switchable `plusIQ` reasoning modes (`{REASON:einstein}`, `{REASON:spoon}`) |
 
 ---
 
